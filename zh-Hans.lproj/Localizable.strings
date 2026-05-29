@@ -1,0 +1,82 @@
+// 中文（简体）本地化字符串
+
+// 通用
+"ok" = "好";
+"done" = "完成";
+"about" = "关于";
+"cancel" = "取消";
+"error" = "错误";
+
+// 关于窗口
+"about_title" = "PicBase64 v%@";
+"about_text" = "一款轻盈高效的 macOS 菜单栏工具，让图片与 Base64 互转变得触手可及。\n\n功能亮点\n✂️  区域截图一键转 Base64，告别繁琐的在线转换\n🔄  双向支持：图片 → Base64 / Base64 → 预览图片\n🎨  多种输出格式：data URL / Markdown / JSON / 纯文本\n🧩  支持拖拽 base64 文本或图片直接预览\n⌨️  全局快捷键，随手截图随手复制\n⚡️  纯 Swift + AppKit 原生实现，零依赖零负担\n📦  安装包体积小巧，启动内存占用极低\n\n快捷键\n⌥1 区域截图  ⌥2 截取窗口  ⌥3 全屏截图\n⌥C 剪贴板图片转 Base64\n⌥V 读取 Base64 显示图片\n⌘, 打开设置\n\n致谢\n图标由 Lucide 开源项目提供\n使用 MIT 开源协议\n\n© 2025 PicBase64 Contributors";
+
+// 菜单栏
+"menu_capture_region" = "截取区域截图";
+"menu_capture_window" = "截取窗口";
+"menu_capture_full" = "全屏截图";
+"menu_clipboard_to_base64" = "剪贴板图片 → Base64";
+"menu_read_base64" = "读取 Base64 → 显示图片";
+"menu_settings" = "设置...";
+"menu_quit" = "退出";
+"menu_output_format" = "输出格式";
+"menu_save_to_desktop" = "同时保存 PNG 到桌面";
+
+// 输出格式选项
+"format_data_url" = "data:image URL（推荐）";
+"format_raw_base64" = "纯 Base64";
+"format_markdown" = "Markdown ![](...)";
+"format_json" = "JSON {\"data\":\"...\"}";
+
+// 设置窗口
+"settings_title" = "设置";
+"settings_heading" = "PicBase64 设置";
+"section_output" = "输出格式";
+"section_save" = "保存选项";
+"section_shortcut" = "快捷键";
+"section_startup" = "启动与反馈";
+
+"label_output_format" = "复制时的格式";
+"desc_output_format" = "选择截图后生成 Base64 的输出格式";
+"label_save_to_desktop" = "同时保存到桌面";
+"desc_save_to_desktop" = "截图后自动保存 PNG 文件到桌面";
+"label_shortcut" = "读取 Base64 快捷键";
+"desc_shortcut" = "按下快捷键打开图片预览窗口";
+"label_launch_at_login" = "开机自动启动";
+"desc_launch_at_login" = "登录系统时自动运行 PicBase64";
+"label_sound" = "提示音";
+"desc_sound" = "截图成功后播放提示音";
+
+"version_about" = "关于";
+"about_button" = "关于";
+
+// 预览窗口
+"preview_title" = "图片预览";
+"btn_from_clipboard" = "从剪贴板读取";
+"btn_copy_png" = "复制 PNG 图片";
+"btn_copy_base64" = "复制 Base64";
+"btn_save_file" = "保存文件";
+"btn_clear" = "清空";
+"preview_hint" = "拖入 base64 文本 · 或点击「从剪贴板读取」";
+"clipboard_empty" = "剪贴板为空";
+"decode_failed" = "无法解码 base64";
+"decode_success" = "解码成功，数据大小 %d bytes";
+"image_invalid" = "无法解析为图片（base64 无效或格式错误）";
+"png_copied" = "PNG 已复制到剪贴板";
+"base64_copied" = "base64 已复制（%d 字符）";
+"saved_to" = "已保存到: %@";
+"save_failed" = "保存失败: %@";
+"cleared" = "已清空";
+
+// 通知
+"notify_startup_title" = "PicBase64 v%@ 已启动";
+"notify_startup_body" = "📷 截取 · %@";
+"notify_screenshot_title" = "✅ %@ Base64 已复制";
+"notify_screenshot_body" = "大小 %.1f KB · Base64 %d 字符";
+"notify_error_clipboard" = "剪贴板无图片";
+"notify_error_clipboard_body" = "请先复制一张图片";
+"notify_format_changed" = "输出格式已更改";
+"notify_error_capture" = "截图失败";
+
+// 权限
+"permission_screenshot" = "PicBase64 需要截图权限以截取屏幕区域";

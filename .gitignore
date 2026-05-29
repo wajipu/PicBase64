@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Build artifacts
+*.app
+PicBase64
+/PicBase64
+*.o
+*.d
+/build/
+
+# 完整的 lucide 库（只保留用到的图标到 icons/ 目录）
+
+# Xcode
+*.xcworkspace
+xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# Editor / IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Logs
+*.log
+/tmp/
+
+# Env / secrets
+.env
+.env.local

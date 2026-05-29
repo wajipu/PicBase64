@@ -1,0 +1,82 @@
+// English Localization Strings
+
+// Common
+"ok" = "OK";
+"done" = "Done";
+"about" = "About";
+"cancel" = "Cancel";
+"error" = "Error";
+
+// About
+"about_title" = "PicBase64 v%@";
+"about_text" = "A lightweight and efficient macOS menu bar tool that makes converting between images and Base64 a breeze.\n\nFeatures\n✂️  Capture and convert to Base64 in one click — no more online converters\n🔄  Bi-directional: Image → Base64 / Base64 → Preview Image\n🎨  Multiple output formats: data URL / Markdown / JSON / Plain text\n🧩  Drag & drop base64 text or images to preview\n⌨️  Global hotkeys for quick capture and copy\n⚡️  Pure Swift + native AppKit implementation, zero dependencies\n📦  Tiny installer size, minimal memory footprint\n\nKeyboard Shortcuts\n⌥1 Capture Region  ⌥2 Capture Window  ⌥3 Full Screen\n⌥C Clipboard Image to Base64\n⌥V Read Base64 to Preview\n⌘, Open Settings\n\nCredits\nIcons by Lucide open source project\nLicensed under MIT License\n\n© 2025 PicBase64 Contributors";
+
+// Menu Bar
+"menu_capture_region" = "Capture Region";
+"menu_capture_window" = "Capture Window";
+"menu_capture_full" = "Capture Full Screen";
+"menu_clipboard_to_base64" = "Clipboard Image → Base64";
+"menu_read_base64" = "Read Base64 → Show Image";
+"menu_settings" = "Settings...";
+"menu_quit" = "Quit";
+"menu_output_format" = "Output Format";
+"menu_save_to_desktop" = "Also Save PNG to Desktop";
+
+// Output formats
+"format_data_url" = "data:image URL (Recommended)";
+"format_raw_base64" = "Raw Base64";
+"format_markdown" = "Markdown ![](...)";
+"format_json" = "JSON {\"data\":\"...\"}";
+
+// Settings Window
+"settings_title" = "Settings";
+"settings_heading" = "PicBase64 Settings";
+"section_output" = "Output Format";
+"section_save" = "Save Options";
+"section_shortcut" = "Keyboard Shortcuts";
+"section_startup" = "Startup & Feedback";
+
+"label_output_format" = "Format to copy";
+"desc_output_format" = "Choose output format after screenshot";
+"label_save_to_desktop" = "Also save to desktop";
+"desc_save_to_desktop" = "Auto-save PNG to desktop after capture";
+"label_shortcut" = "Read Base64 shortcut";
+"desc_shortcut" = "Press hotkey to open preview window";
+"label_launch_at_login" = "Launch at login";
+"desc_launch_at_login" = "Auto-start PicBase64 on login";
+"label_sound" = "Sound feedback";
+"desc_sound" = "Play sound on capture success";
+
+"version_about" = "About";
+"about_button" = "About";
+
+// Preview Window
+"preview_title" = "Image Preview";
+"btn_from_clipboard" = "From Clipboard";
+"btn_copy_png" = "Copy PNG";
+"btn_copy_base64" = "Copy Base64";
+"btn_save_file" = "Save File";
+"btn_clear" = "Clear";
+"preview_hint" = "Drop base64 text here · or click 'From Clipboard'";
+"clipboard_empty" = "Clipboard is empty";
+"decode_failed" = "Failed to decode base64";
+"decode_success" = "Decoded successfully, data size %d bytes";
+"image_invalid" = "Cannot parse as image (invalid base64 or format)";
+"png_copied" = "PNG copied to clipboard";
+"base64_copied" = "Base64 copied (%d chars)";
+"saved_to" = "Saved to: %@";
+"save_failed" = "Save failed: %@";
+"cleared" = "Cleared";
+
+// Notifications
+"notify_startup_title" = "PicBase64 v%@ Started";
+"notify_startup_body" = "📷 Capture · %@";
+"notify_screenshot_title" = "✅ %@ Base64 Copied";
+"notify_screenshot_body" = "Size %.1f KB · Base64 %d chars";
+"notify_error_clipboard" = "No image in clipboard";
+"notify_error_clipboard_body" = "Please copy an image first";
+"notify_format_changed" = "Output format changed";
+"notify_error_capture" = "Capture Failed";
+
+// Permissions
+"permission_screenshot" = "PicBase64 needs screen capture permission to capture screen area";

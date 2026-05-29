@@ -1,0 +1,73 @@
+name: Package macOS App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build and package PicBase64
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Generate app icon
+        run: |
+          swiftc \
+            -framework AppKit \
+            -framework ImageIO \
+            -framework UniformTypeIdentifiers \
+            makeIconV2.swift \
+            -o /tmp/make-picbase64-icon
+          /tmp/make-picbase64-icon
+          test -f /tmp/PicBase64.icns
+
+      - name: Build executable
+        run: |
+          swiftc -O \
+            -framework AppKit \
+            -framework UserNotifications \
+            -framework UniformTypeIdentifiers \
+            PicBase64.swift SettingsWindow.swift IconManager.swift main.swift \
+            -o PicBase64
+
+      - name: Assemble app bundle
+        run: |
+          mkdir -p PicBase64.app/Contents/MacOS
+          mkdir -p PicBase64.app/Contents/Resources/icons
+          mkdir -p PicBase64.app/Contents/Resources/zh-Hans.lproj
+          mkdir -p PicBase64.app/Contents/Resources/en.lproj
+
+          cp PicBase64 PicBase64.app/Contents/MacOS/
+          cp Info.plist PicBase64.app/Contents/
+          cp icons/*.svg PicBase64.app/Contents/Resources/icons/
+          cp zh-Hans.lproj/*.strings PicBase64.app/Contents/Resources/zh-Hans.lproj/
+          cp en.lproj/*.strings PicBase64.app/Contents/Resources/en.lproj/
+          cp /tmp/PicBase64.icns PicBase64.app/Contents/Resources/AppIcon.icns
+
+          plutil -lint PicBase64.app/Contents/Info.plist
+          codesign --force --deep --sign - PicBase64.app
+
+      - name: Create zip package
+        run: |
+          ditto -c -k --keepParent PicBase64.app PicBase64-macos.zip
+          shasum -a 256 PicBase64-macos.zip > PicBase64-macos.zip.sha256
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: PicBase64-macos
+          path: |
+            PicBase64-macos.zip
+            PicBase64-macos.zip.sha256
+          if-no-files-found: error

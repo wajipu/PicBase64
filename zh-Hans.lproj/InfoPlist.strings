@@ -1,0 +1,3 @@
+CFBundleDisplayName = "PicBase64";
+CFBundleName = "PicBase64";
+NSScreenCaptureUsageDescription = "PicBase64 需要截图权限以截取屏幕区域";
