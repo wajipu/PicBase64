@@ -32,13 +32,13 @@
 
 ### 方式一：直接下载 App
 
-前往 [Releases](../../releases) 下载最新的 `PicBase64.app`，拖入 `~/Applications` 目录即可。
+前往 [Releases](https://github.com/wajipu/PicBase64/releases) 下载最新的 `PicBase64-macos.zip`，解压后把 `PicBase64.app` 拖入 `~/Applications` 目录即可。
 
 ### 方式二：自己编译
 
 ```bash
-git clone https://github.com/<你的用户名>/shot-base64.git
-cd shot-base64
+git clone https://github.com/wajipu/PicBase64.git
+cd PicBase64
 
 swiftc -O \
   -framework AppKit \
