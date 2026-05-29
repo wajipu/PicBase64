@@ -1,0 +1,13 @@
+---
+scope: project
+alwaysApply: true
+description: Localization
+---
+
+User-facing text should go through `L("key")` or `LF("key", args...)` and be added to every localization directory:
+
+- `zh-Hans.lproj`
+- `en.lproj`
+- `ug.lproj`
+
+Do not add hard-coded UI strings in Swift unless they are debug-only.

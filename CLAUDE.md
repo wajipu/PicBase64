@@ -1,14 +1,8 @@
-# Project Instructions
-
-## AI Configuration
-
 Use `.ai/` as the source of truth for AI agent configuration. Run `npm run ai:sync` after changing `.ai/rules/*` so generated files stay aligned across Codex, Claude Code, Cursor, and GitHub Copilot.
 
 Generated target files include `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`, and `.github/copilot-instructions.md`.
 
 ---
-
-## Build
 
 ```bash
 swiftc -O \
@@ -21,8 +15,6 @@ swiftc -O \
 
 ---
 
-## Localization
-
 User-facing text should go through `L("key")` or `LF("key", args...)` and be added to every localization directory:
 
 - `zh-Hans.lproj`
@@ -33,18 +25,12 @@ Do not add hard-coded UI strings in Swift unless they are debug-only.
 
 ---
 
-## Package
-
 The GitHub Actions workflow at `.github/workflows/package.yml` builds `PicBase64.app`, copies every `*.lproj` localization directory into the app bundle, signs ad hoc, and uploads `PicBase64-macos.zip`.
 
 ---
 
-## Project
-
 PicBase64 is a native macOS menu bar app written in Swift and AppKit. It converts screenshots or clipboard images to Base64 and previews Base64 image data.
 
 ---
-
-## Repository Rules
 
 Do not commit generated build output such as `PicBase64`, `PicBase64.app`, `.build`, or `build/`. Keep secrets out of repository-level AI configuration files.

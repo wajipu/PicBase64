@@ -1,0 +1,7 @@
+---
+scope: project
+alwaysApply: true
+description: Repository Rules
+---
+
+Do not commit generated build output such as `PicBase64`, `PicBase64.app`, `.build`, or `build/`. Keep secrets out of repository-level AI configuration files.

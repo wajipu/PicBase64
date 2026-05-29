@@ -26,6 +26,9 @@ xcuserdata/
 Packages/
 Package.resolved
 
+# Node.js tooling
+node_modules/
+
 # Editor / IDE
 .idea/
 .vscode/

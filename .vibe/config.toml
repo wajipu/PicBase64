@@ -1,6 +1,0 @@
-# Project-level Vibe Code configuration.
-# Keep API keys and provider credentials in ~/.vibe/config.toml or environment variables.
-
-enable_auto_update = true
-enable_notifications = true
-enable_telemetry = false

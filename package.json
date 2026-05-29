@@ -1,0 +1,13 @@
+{
+  "name": "picbase64",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ai:check": "dotai check",
+    "ai:status": "dotai status",
+    "ai:sync": "dotai sync --target all --force --yes"
+  },
+  "devDependencies": {
+    "@nullbrain/dotai": "0.1.0-alpha.3"
+  }
+}

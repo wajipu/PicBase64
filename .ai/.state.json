@@ -1,0 +1,14 @@
+{
+  "lastSync": "2026-05-29T06:06:37.675Z",
+  "files": {
+    "CLAUDE.md": "7114813e48de1439",
+    ".cursor/rules/ai-configuration.mdc": "bf21df04a6643f5d",
+    ".cursor/rules/build.mdc": "bf8459f1cee8c8a9",
+    ".cursor/rules/localization.mdc": "10146470484e42b6",
+    ".cursor/rules/package.mdc": "8b267df8970c5b94",
+    ".cursor/rules/project.mdc": "dceb143cc618bf8e",
+    ".cursor/rules/repository-rules.mdc": "91e34f9c0587a43d",
+    "AGENTS.md": "637d24097348c826",
+    ".github/copilot-instructions.md": "7114813e48de1439"
+  }
+}

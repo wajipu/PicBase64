@@ -72,14 +72,23 @@ PicBase64/
 ├── zh-Hans.lproj/         # 中文本地化
 ├── en.lproj/              # 英文本地化
 ├── ug.lproj/              # 维吾尔语本地化
-├── .vibe/config.toml      # Vibe Code 项目配置
+├── .ai/                   # dotai 统一 AI agent 配置源
 ├── AGENTS.md              # AI 协作与构建说明
+├── CLAUDE.md              # Claude Code 生成配置
+├── .cursor/rules/         # Cursor 生成规则
+├── .github/               # GitHub Actions 与 Copilot 配置
 └── makeIconV2.swift       # 生成扁平化图标脚本
 ```
 
-## 🤖 Vibe Code 配置
+## 🤖 AI Agent 配置
 
-仓库包含项目级 `.vibe/config.toml` 和 `AGENTS.md`。项目配置只保存通用偏好，不包含 API Key；密钥请放在本机的 `~/.vibe/config.toml` 或环境变量里。
+仓库使用 [`@nullbrain/dotai`](https://www.npmjs.com/package/@nullbrain/dotai) 统一管理不同 AI 编程工具的配置。`.ai/` 是唯一源文件目录，`AGENTS.md`、`CLAUDE.md`、`.cursor/rules/*.mdc` 和 `.github/copilot-instructions.md` 都由它生成。
+
+```bash
+npm install
+npm run ai:check
+npm run ai:sync
+```
 
 ## 🎛 快捷键
 
