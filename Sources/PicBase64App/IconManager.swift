@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 class IconManager {
     static let shared = IconManager()
     private var cache: [String: NSImage] = [:]
@@ -23,10 +24,15 @@ class IconManager {
     }
     
     private func loadSVG(name: String) -> Data? {
+        let sourceRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .path
         let paths = [
             Bundle.main.path(forResource: name, ofType: "svg", inDirectory: "icons"),
             Bundle.main.resourcePath?.appending("/icons/\(name).svg"),
-            "/Users/wajipu/Downloads/PicBase64_4.0/PicBase64.app/Contents/Resources/icons/\(name).svg"
+            "\(sourceRoot)/icons/\(name).svg"
         ]
         
         for path in paths {

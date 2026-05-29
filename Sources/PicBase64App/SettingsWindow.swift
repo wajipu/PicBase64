@@ -1,4 +1,5 @@
 import AppKit
+import PicBase64Core
 
 class SettingsWindowController: NSWindowController, NSWindowDelegate {
     weak var parent: AppDelegate?
@@ -7,12 +8,13 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     var formatPopup: NSPopUpButton!
     var saveDesktopToggle: NSSwitch!
     var shortcutPopup: NSPopUpButton!
+    var languagePopup: NSPopUpButton!
     var launchAtLoginToggle: NSSwitch!
     var soundToggle: NSSwitch!
     
     init(parent: AppDelegate) {
         self.parent = parent
-        let frame = NSRect(x: 0, y: 0, width: 560, height: 480)
+        let frame = NSRect(x: 0, y: 0, width: 620, height: 640)
         let window = NSWindow(contentRect: frame,
                               styleMask: [.titled, .closable],
                               backing: .buffered, defer: false)
@@ -57,6 +59,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         
         mainStack.addArrangedSubview(sectionHeader(icon: "file-text", title: L("section_output")))
         mainStack.addArrangedSubview(createFormatRow())
+        mainStack.addArrangedSubview(createLanguageRow())
         
         mainStack.addArrangedSubview(separator())
         
@@ -73,6 +76,11 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         mainStack.addArrangedSubview(sectionHeader(icon: "zap", title: L("section_startup")))
         mainStack.addArrangedSubview(createStartupRow())
         mainStack.addArrangedSubview(createSoundRow())
+
+        mainStack.addArrangedSubview(separator())
+
+        mainStack.addArrangedSubview(sectionHeader(icon: "clipboard", title: L("section_agent_bridge")))
+        mainStack.addArrangedSubview(createAgentBridgeRow())
         
         // 底部按钮
         let spacer = NSView()
@@ -178,6 +186,26 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
             }()
         )
     }
+
+    func createLanguageRow() -> NSView {
+        return settingRow(
+            label: L("label_app_language"),
+            description: L("desc_app_language"),
+            control: { [weak self] in
+                let popup = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
+                for language in AppLanguage.allCases {
+                    popup.addItem(withTitle: L(language.titleKey))
+                }
+                if let index = AppLanguage.allCases.firstIndex(of: AppLocalization.selectedLanguage) {
+                    popup.selectItem(at: index)
+                }
+                popup.target = self
+                popup.action = #selector(self?.languageChanged(_:))
+                self?.languagePopup = popup
+                return popup
+            }()
+        )
+    }
     
     func createShortcutRow() -> NSView {
         return settingRow(
@@ -225,6 +253,32 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
                 self?.soundToggle = sw
                 return sw
             }()
+        )
+    }
+
+    func createAgentBridgeRow() -> NSView {
+        let controls = NSStackView()
+        controls.orientation = .vertical
+        controls.spacing = 8
+        controls.alignment = .trailing
+
+        let pathField = NSTextField(labelWithString: mcpServerPath())
+        pathField.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
+        pathField.textColor = .secondaryLabelColor
+        pathField.lineBreakMode = .byTruncatingMiddle
+        pathField.maximumNumberOfLines = 1
+        pathField.widthAnchor.constraint(equalToConstant: 320).isActive = true
+        controls.addArrangedSubview(pathField)
+
+        let copyConfigBtn = iconButton(icon: "copy", title: L("btn_copy_mcp_config")) { [weak self] in
+            self?.copyMCPConfig()
+        }
+        controls.addArrangedSubview(copyConfigBtn)
+
+        return settingRow(
+            label: L("label_agent_bridge"),
+            description: L("desc_agent_bridge"),
+            control: controls
         )
     }
     
@@ -305,6 +359,15 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     @objc func shortcutChanged(_ sender: NSPopUpButton) {
         UserDefaults.standard.set(sender.titleOfSelectedItem ?? "⌥V", forKey: "previewShortcut")
     }
+
+    @objc func languageChanged(_ sender: NSPopUpButton) {
+        let languages = AppLanguage.allCases
+        let idx = sender.indexOfSelectedItem
+        guard idx >= 0, idx < languages.count else { return }
+        AppLocalization.selectedLanguage = languages[idx]
+        parent?.setupMenuBar()
+        reloadUI()
+    }
     
     @objc func launchChanged(_ sender: NSSwitch) {
         let on = sender.state == .on
@@ -315,16 +378,69 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     @objc func soundChanged(_ sender: NSSwitch) {
         UserDefaults.standard.set(sender.state == .on, forKey: "soundEnabled")
     }
+
+    func reloadUI() {
+        guard let window, let contentView = window.contentView else { return }
+        window.title = "PicBase64 · \(L("settings_title"))"
+        contentView.subviews.forEach { $0.removeFromSuperview() }
+        setupUI()
+    }
+
+    func copyMCPConfig() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(mcpConfigSnippet(), forType: .string)
+
+        let alert = NSAlert()
+        alert.messageText = L("mcp_config_copied_title")
+        alert.informativeText = L("mcp_config_copied_body")
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: L("ok"))
+        alert.runModal()
+    }
+
+    func mcpServerPath() -> String {
+        let bundledPath = Bundle.main.bundleURL
+            .appendingPathComponent("Contents/MacOS/picbase64-mcp")
+            .path
+        if FileManager.default.isExecutableFile(atPath: bundledPath) {
+            return bundledPath
+        }
+
+        let sourceRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let releasePath = sourceRoot
+            .appendingPathComponent(".build/release/picbase64-mcp")
+            .path
+        if FileManager.default.isExecutableFile(atPath: releasePath) {
+            return releasePath
+        }
+
+        return releasePath
+    }
+
+    func mcpConfigSnippet() -> String {
+        """
+        {
+          "mcpServers": {
+            "picbase64": {
+              "command": "\(mcpServerPath())"
+            }
+          }
+        }
+        """
+    }
     
     func showAbout() {
-        let info = NSLocalizedString("about_text", comment: "")
+        let info = L("about_text")
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.0"
         
         let alert = NSAlert()
-        alert.messageText = String(format: NSLocalizedString("about_title", comment: ""), version)
+        alert.messageText = LF("about_title", version)
         alert.informativeText = info
         alert.alertStyle = .informational
-        alert.addButton(withTitle: NSLocalizedString("ok", comment: ""))
+        alert.addButton(withTitle: L("ok"))
         alert.runModal()
     }
 }

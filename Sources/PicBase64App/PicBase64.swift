@@ -1,14 +1,8 @@
 import AppKit
 import Foundation
+import PicBase64Core
 import UserNotifications
-
-func L(_ key: String) -> String {
-    NSLocalizedString(key, comment: "")
-}
-
-func LF(_ key: String, _ args: CVarArg...) -> String {
-    String(format: L(key), locale: Locale.current, arguments: args)
-}
+import UniformTypeIdentifiers
 
 // MARK: - AppKit SVG 扩展
 extension NSImage {
@@ -56,15 +50,8 @@ extension NSImage {
     }
 }
 
-// MARK: - 输出格式
-enum OutputFormat: String {
-    case raw        = "raw"
-    case dataURL    = "data"
-    case markdown   = "md"
-    case json       = "json"
-}
-
 // MARK: - AppDelegate
+@MainActor
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     var statusItem: NSStatusItem!
     var format: OutputFormat = .dataURL
@@ -101,13 +88,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 
-    func userNotificationCenter(_ c: UNUserNotificationCenter, willPresent _: UNNotification,
-                                withCompletionHandler h: @escaping (UNNotificationPresentationOptions) -> Void) {
+    nonisolated func userNotificationCenter(_ c: UNUserNotificationCenter, willPresent _: UNNotification,
+                                            withCompletionHandler h: @escaping (UNNotificationPresentationOptions) -> Void) {
         h([.banner, .sound, .list])
     }
 
     func setupMenuBar() {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        if statusItem == nil {
+            statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        }
         if let button = statusItem.button {
             let img = NSImage(systemSymbolName: "camera.fill", accessibilityDescription: nil)
             img?.isTemplate = true
@@ -117,15 +106,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         let menu = NSMenu()
 
         // 截图
-        addShotItem(menu, title: "\(L("menu_capture_region"))  ⌥1", selector: #selector(captureRegion(_:)), key: "1")
-        addShotItem(menu, title: "\(L("menu_capture_window"))  ⌥2", selector: #selector(captureWindow(_:)), key: "2")
-        addShotItem(menu, title: "\(L("menu_capture_full"))  ⌥3", selector: #selector(captureFull(_:)), key: "3")
-        addShotItem(menu, title: "\(L("menu_clipboard_to_base64"))  ⌥C", selector: #selector(clipboardToB64(_:)), key: "c")
+        addShotItem(menu, title: L("menu_capture_region"), selector: #selector(captureRegion(_:)), key: "1")
+        addShotItem(menu, title: L("menu_capture_window"), selector: #selector(captureWindow(_:)), key: "2")
+        addShotItem(menu, title: L("menu_capture_full"), selector: #selector(captureFull(_:)), key: "3")
+        addShotItem(menu, title: L("menu_clipboard_to_base64"), selector: #selector(clipboardToB64(_:)), key: "c")
 
         menu.addItem(.separator())
 
         // 🆕 反向解析
-        let readItem = NSMenuItem(title: "\(L("menu_read_base64"))  ⌥V",
+        let readItem = NSMenuItem(title: L("menu_read_base64"),
                                   action: #selector(showBase64Preview(_:)), keyEquivalent: "v")
         readItem.keyEquivalentModifierMask = .option
         readItem.target = self
@@ -184,23 +173,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
 
     // MARK: - 截图
-    @objc func captureRegion(_ s: Any?) { capture(args: ["-i", "-x"]) }
-    @objc func captureWindow(_ s: Any?) { capture(args: ["-iW", "-x"]) }
-    @objc func captureFull(_ s: Any?)    { capture(args: ["-x"]) }
+    @objc func captureRegion(_ s: Any?) { capture(mode: .region) }
+    @objc func captureWindow(_ s: Any?) { capture(mode: .window) }
+    @objc func captureFull(_ s: Any?)    { capture(mode: .full) }
 
-    func capture(args: [String]) {
+    func capture(mode: ScreenshotMode) {
         statusItem.menu?.cancelTracking()
-        let tmpFile = NSTemporaryDirectory() + "PicBase64_\(UUID().uuidString).png"
-        let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-        task.arguments = args + [tmpFile]
         do {
-            try task.run()
-            task.waitUntilExit()
-            if task.terminationStatus != 0 { return }
-            guard FileManager.default.fileExists(atPath: tmpFile) else { return }
-            defer { try? FileManager.default.removeItem(atPath: tmpFile) }
-            let data = try Data(contentsOf: URL(fileURLWithPath: tmpFile))
+            let data = try ImageServices.screenshot(mode: mode)
             processResult(data: data, label: L("source_screenshot"))
         } catch {
             NSSound.beep()
@@ -209,32 +189,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
 
     @objc func clipboardToB64(_ s: Any?) {
-        let pb = NSPasteboard.general
-        guard let image = pb.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage,
-              let tiff = image.tiffRepresentation,
-              let rep = NSBitmapImageRep(data: tiff),
-              let pngData = rep.representation(using: .png, properties: [:]) else {
+        do {
+            let pngData = try ImageServices.readClipboardPNGData()
+            processResult(data: pngData, label: L("source_clipboard_image"))
+        } catch {
             showNotify(title: L("notify_error_clipboard"), body: L("notify_error_clipboard_body"))
-            return
         }
-        processResult(data: pngData, label: L("source_clipboard_image"))
     }
 
     func processResult(data: Data, label: String) {
-        let b64 = data.base64EncodedString()
-        var output: String
-        switch format {
-        case .raw:      output = b64
-        case .dataURL:  output = "data:image/png;base64,\(b64)"
-        case .markdown: output = "![\(label)](data:image/png;base64,\(b64))"
-        case .json:
-            let json: [String: Any] = ["type": "image/png", "data": b64, "size": data.count]
-            if let d = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys]),
-               let s = String(data: d, encoding: .utf8) { output = s } else { output = b64 }
-        }
+        let result = ImageServices.encode(data: data, label: label, format: format)
 
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(output, forType: .string)
+        ImageServices.copyStringToClipboard(result.output)
 
         if saveToDesktop {
             let desktopPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
@@ -245,7 +211,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
         NSSound(named: "Funk")?.play()
         let sizeKB = Double(data.count) / 1024.0
-        let body = LF("notify_screenshot_body", sizeKB, b64.count)
+        let body = LF("notify_screenshot_body", sizeKB, result.details.base64Length)
         showNotify(title: LF("notify_screenshot_title", label), body: body)
     }
 
@@ -281,46 +247,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
 
     func decodeBase64(_ input: String) -> Data? {
-        var s = input.trimmingCharacters(in: .whitespacesAndNewlines)
         debugLog("\n=== decodeBase64 开始 ===")
-        debugLog("原始输入长度: \(s.count)")
-        debugLog("前100字符: \(s.prefix(100))")
-        
-        // 1. 去除 markdown ![alt](data:...)
-        if s.hasPrefix("![") {
-            if let start = s.range(of: "base64,"), let end = s.range(of: ")", options: .backwards) {
-                s = String(s[start.upperBound..<end.lowerBound])
-                debugLog("✅ 去掉 markdown 包装")
-            }
-        }
-        
-        // 2. 去除 data URL 前缀
-        if s.hasPrefix("data:") {
-            if let range = s.range(of: ",") {
-                s = String(s[range.upperBound...])
-                debugLog("✅ 去掉 data URL 前缀")
-            }
-        }
-        
-        // 3. 去掉首尾引号
-        if (s.hasPrefix("\"") && s.hasSuffix("\"")) ||
-           (s.hasPrefix("'") && s.hasSuffix("'")) {
-            s = String(s.dropFirst().dropLast())
-            debugLog("✅ 去掉引号")
-        }
-        
-        // 4. 清理空白字符
-        s = s.replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
-        debugLog("清理后长度: \(s.count)")
-        
-        // 5. 解码
-        guard let data = Data(base64Encoded: s, options: .ignoreUnknownCharacters) else {
+        debugLog("原始输入长度: \(input.count)")
+        debugLog("前100字符: \(input.prefix(100))")
+
+        do {
+            let data = try ImageServices.decodeBase64Data(input)
+            debugLog("✅ 解码成功: \(data.count) bytes")
+            return data
+        } catch {
             debugLog("❌ base64 解码失败")
-            debugLog("前50字符: \(String(s.prefix(50)))")
             return nil
         }
-        debugLog("✅ 解码成功: \(data.count) bytes")
-        return data
     }
 
     // MARK: - Menu actions
@@ -689,5 +627,3 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         scrollView.reflectScrolledClipView(scrollView.contentView)
     }
 }
-
-import UniformTypeIdentifiers

@@ -9,18 +9,18 @@
 
 // About
 "about_title" = "PicBase64 v%@";
-"about_text" = "A lightweight and efficient macOS menu bar tool that makes converting between images and Base64 a breeze.\n\nFeatures\n✂️  Capture and convert to Base64 in one click — no more online converters\n🔄  Bi-directional: Image → Base64 / Base64 → Preview Image\n🎨  Multiple output formats: data URL / Markdown / JSON / Plain text\n🧩  Drag & drop base64 text or images to preview\n⌨️  Global hotkeys for quick capture and copy\n⚡️  Pure Swift + native AppKit implementation, zero dependencies\n📦  Tiny installer size, minimal memory footprint\n\nKeyboard Shortcuts\n⌥1 Capture Region  ⌥2 Capture Window  ⌥3 Full Screen\n⌥C Clipboard Image to Base64\n⌥V Read Base64 to Preview\n⌘, Open Settings\n\nCredits\nIcons by Lucide open source project\nLicensed under MIT License\n\n© 2025 PicBase64 Contributors";
+"about_text" = "A lightweight and efficient macOS menu bar tool that makes converting between images and Base64 a breeze.\n\nFeatures\n✂️  Capture and convert to Base64 in one click — no more online converters\n🔄  Bi-directional: Image → Base64 / Base64 → Preview Image\n🎨  Multiple output formats: data URL / Markdown / JSON / Plain text\n🧩  Drag & drop base64 text or images to preview\n⌨️  Global hotkeys for quick capture and copy\n⚡️  Swift + native AppKit implementation, with image data processed locally\n📦  Lightweight menu bar experience, with an MCP companion in release builds\n\nKeyboard Shortcuts\n⌥1 Capture Region  ⌥2 Capture Window  ⌥3 Full Screen\n⌥C Clipboard Image to Base64\n⌥V Read Base64 to Preview\n⌘, Open Settings\n\nCredits\nIcons by Lucide open source project\nLicensed under MIT License\n\n© 2025 PicBase64 Contributors";
 
 // Menu Bar
 "menu_capture_region" = "Capture Region";
 "menu_capture_window" = "Capture Window";
 "menu_capture_full" = "Capture Full Screen";
-"menu_clipboard_to_base64" = "Clipboard Image → Base64";
-"menu_read_base64" = "Read Base64 → Show Image";
+"menu_clipboard_to_base64" = "Clipboard Image to Base64";
+"menu_read_base64" = "Preview Base64 Image";
 "menu_settings" = "Settings...";
 "menu_quit" = "Quit";
 "menu_output_format" = "Output Format";
-"menu_save_to_desktop" = "Also Save PNG to Desktop";
+"menu_save_to_desktop" = "Save PNG to Desktop";
 
 // Output formats
 "format_data_url" = "data:image URL (Recommended)";
@@ -42,9 +42,16 @@
 "section_save" = "Save Options";
 "section_shortcut" = "Keyboard Shortcuts";
 "section_startup" = "Startup & Feedback";
+"section_agent_bridge" = "AI Agent Bridge";
 
 "label_output_format" = "Format to copy";
 "desc_output_format" = "Choose output format after screenshot";
+"label_app_language" = "App language";
+"desc_app_language" = "Choose the PicBase64 interface language without changing the system language";
+"language_system" = "Follow System";
+"language_zh_hans" = "简体中文";
+"language_en" = "English";
+"language_ug" = "ئۇيغۇرچە";
 "label_save_to_desktop" = "Also save to desktop";
 "desc_save_to_desktop" = "Auto-save PNG to desktop after capture";
 "label_shortcut" = "Read Base64 shortcut";
@@ -53,6 +60,11 @@
 "desc_launch_at_login" = "Auto-start PicBase64 on login";
 "label_sound" = "Sound feedback";
 "desc_sound" = "Play sound on capture success";
+"label_agent_bridge" = "Local MCP tools";
+"desc_agent_bridge" = "Copy a config snippet so a host AI agent can call local screenshot, clipboard, and Base64 tools";
+"btn_copy_mcp_config" = "Copy MCP Config";
+"mcp_config_copied_title" = "MCP Config Copied";
+"mcp_config_copied_body" = "Add the config snippet to an MCP-capable host agent, then restart that agent.";
 
 "version_about" = "About";
 "about_button" = "About";
