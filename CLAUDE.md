@@ -5,12 +5,8 @@ Generated target files include `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`, 
 ---
 
 ```bash
-swiftc -O \
-  -framework AppKit \
-  -framework UserNotifications \
-  -framework UniformTypeIdentifiers \
-  PicBase64.swift SettingsWindow.swift IconManager.swift main.swift \
-  -o PicBase64
+swift build -c release --product PicBase64
+swift build -c release --product picbase64-mcp
 ```
 
 ---
@@ -25,11 +21,11 @@ Do not add hard-coded UI strings in Swift unless they are debug-only.
 
 ---
 
-The GitHub Actions workflow at `.github/workflows/package.yml` builds `PicBase64.app`, copies every `*.lproj` localization directory into the app bundle, signs ad hoc, and uploads `PicBase64-macos.zip`.
+The GitHub Actions workflow at `.github/workflows/package.yml` builds `PicBase64.app` with SwiftPM, copies the `picbase64-mcp` companion binary into the app bundle, copies every `*.lproj` localization directory into the app bundle, signs ad hoc, and uploads `PicBase64-macos.zip`.
 
 ---
 
-PicBase64 is a native macOS menu bar app written in Swift and AppKit. It converts screenshots or clipboard images to Base64 and previews Base64 image data.
+PicBase64 is a native macOS menu bar app written in Swift and AppKit. It converts screenshots or clipboard images to Base64, previews Base64 image data, and ships a local MCP companion server so host AI agents can call the same local image tools.
 
 ---
 

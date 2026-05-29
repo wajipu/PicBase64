@@ -34,19 +34,16 @@ jobs:
 
       - name: Build executable
         run: |
-          swiftc -O \
-            -framework AppKit \
-            -framework UserNotifications \
-            -framework UniformTypeIdentifiers \
-            PicBase64.swift SettingsWindow.swift IconManager.swift main.swift \
-            -o PicBase64
+          swift build -c release --product PicBase64
+          swift build -c release --product picbase64-mcp
 
       - name: Assemble app bundle
         run: |
           mkdir -p PicBase64.app/Contents/MacOS
           mkdir -p PicBase64.app/Contents/Resources/icons
 
-          cp PicBase64 PicBase64.app/Contents/MacOS/
+          cp .build/release/PicBase64 PicBase64.app/Contents/MacOS/
+          cp .build/release/picbase64-mcp PicBase64.app/Contents/MacOS/
           cp Info.plist PicBase64.app/Contents/
           cp icons/*.svg PicBase64.app/Contents/Resources/icons/
           find . -maxdepth 1 -type d -name "*.lproj" -exec cp -R {} PicBase64.app/Contents/Resources/ \;

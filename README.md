@@ -2,7 +2,7 @@
 
 一款轻盈高效的 macOS 菜单栏工具，让图片与 Base64 互转变得触手可及。
 
-![Swift](https://img.shields.io/badge/Swift-5.9-orange?logo=swift)
+![Swift](https://img.shields.io/badge/Swift-6.0-orange?logo=swift)
 ![macOS](https://img.shields.io/badge/macOS-13+-blue?logo=apple)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
@@ -10,13 +10,15 @@
 
 - ✂️ **一键截图转 Base64** — 区域 / 窗口 / 全屏截图直接复制，告别繁琐的在线转换
 - 🔄 **双向转换** — 图片 → Base64 或 Base64 → 预览图片
+- 🤖 **AI Agent Bridge** — 内置本地 MCP companion，让宿主 AI agent 调用截图、剪贴板和图片转换能力
 - 🎨 **多种输出格式** — data URL / Markdown / JSON / 纯 Base64
+- 🌐 **应用内语言切换** — 可在设置中选择跟随系统、简体中文、English 或 ئۇيغۇرچە
 - 🧩 **拖拽预览** — 把 base64 文本或图片文件直接拖入预览窗口
 - ⌨️ **全局快捷键** — ⌥1 / ⌥2 / ⌥3 / ⌥C / ⌥V 随时触发
 - 🌍 **国际化** — 支持简体中文、英文和维吾尔语
-- ⚡️ **原生实现** — 纯 Swift + AppKit，零依赖
+- ⚡️ **原生实现** — Swift + AppKit，本机处理图片数据
 - 🎨 **Lucide 图标** — 统一精美的扁平化 UI 图标
-- 📦 **轻量体积** — 安装包约数百 KB
+- 📦 **轻量体验** — 菜单栏常驻，占用少，release 包含 MCP companion
 
 ## 📸 截图
 
@@ -40,16 +42,13 @@
 git clone https://github.com/wajipu/PicBase64.git
 cd PicBase64
 
-swiftc -O \
-  -framework AppKit \
-  -framework UserNotifications \
-  -framework UniformTypeIdentifiers \
-  PicBase64.swift SettingsWindow.swift IconManager.swift main.swift \
-  -o PicBase64
+swift build -c release --product PicBase64
+swift build -c release --product picbase64-mcp
 
 # 打包为 .app
 mkdir -p PicBase64.app/Contents/{MacOS,Resources/icons}
-cp PicBase64 PicBase64.app/Contents/MacOS/
+cp .build/release/PicBase64 PicBase64.app/Contents/MacOS/
+cp .build/release/picbase64-mcp PicBase64.app/Contents/MacOS/
 cp Info.plist PicBase64.app/Contents/
 cp icons/*.svg PicBase64.app/Contents/Resources/icons/
 find . -maxdepth 1 -type d -name "*.lproj" -exec cp -R {} PicBase64.app/Contents/Resources/ \;
@@ -63,10 +62,12 @@ open PicBase64.app
 
 ```
 PicBase64/
-├── PicBase64.swift        # 主程序 (App + 截图 + Base64 转换)
-├── SettingsWindow.swift   # 设置窗口 (Lucide 图标 + UI)
-├── IconManager.swift      # SVG 图标加载与缓存
-├── main.swift             # 入口
+├── Package.swift          # SwiftPM 构建配置
+├── Sources/
+│   ├── PicBase64App/      # 菜单栏 AppKit app
+│   ├── PicBase64Core/     # 图片、剪贴板、截图和 Base64 共享逻辑
+│   └── PicBase64MCP/      # 本地 MCP companion server
+├── Tests/                 # Core 单元测试
 ├── Info.plist             # App 元数据 + 国际化配置
 ├── icons/                 # 所用到的 Lucide SVG 图标
 ├── zh-Hans.lproj/         # 中文本地化
@@ -89,6 +90,21 @@ npm install
 npm run ai:check
 npm run ai:sync
 ```
+
+## 🤖 AI Agent Bridge
+
+Release 包内包含 `picbase64-mcp`，可作为本地 MCP server 被 Claude Desktop、Codex 或其他 MCP host 调用。打开 PicBase64 设置窗口，点击「复制 MCP 配置」即可复制配置片段。
+
+当前 MCP tools：
+
+| Tool | 功能 |
+|------|------|
+| `clipboard_image_to_base64` | 读取剪贴板图片并输出 Base64 / Data URL / Markdown / JSON |
+| `capture_screenshot` | 截取区域 / 窗口 / 全屏截图并输出 Base64，可选保存 PNG |
+| `image_file_to_base64` | 读取本机图片文件并输出 Base64 |
+| `base64_to_image_file` | 把 Base64 / Data URL / Markdown 图片还原为 PNG 文件 |
+
+所有处理默认在本机完成，不上传图片。
 
 ## 🎛 快捷键
 
