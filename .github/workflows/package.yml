@@ -45,14 +45,11 @@ jobs:
         run: |
           mkdir -p PicBase64.app/Contents/MacOS
           mkdir -p PicBase64.app/Contents/Resources/icons
-          mkdir -p PicBase64.app/Contents/Resources/zh-Hans.lproj
-          mkdir -p PicBase64.app/Contents/Resources/en.lproj
 
           cp PicBase64 PicBase64.app/Contents/MacOS/
           cp Info.plist PicBase64.app/Contents/
           cp icons/*.svg PicBase64.app/Contents/Resources/icons/
-          cp zh-Hans.lproj/*.strings PicBase64.app/Contents/Resources/zh-Hans.lproj/
-          cp en.lproj/*.strings PicBase64.app/Contents/Resources/en.lproj/
+          find . -maxdepth 1 -type d -name "*.lproj" -exec cp -R {} PicBase64.app/Contents/Resources/ \;
           cp /tmp/PicBase64.icns PicBase64.app/Contents/Resources/AppIcon.icns
 
           plutil -lint PicBase64.app/Contents/Info.plist

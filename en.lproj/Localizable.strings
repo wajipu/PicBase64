@@ -28,6 +28,13 @@
 "format_markdown" = "Markdown ![](...)";
 "format_json" = "JSON {\"data\":\"...\"}";
 
+// Data sources
+"source_screenshot" = "Screenshot";
+"source_clipboard_image" = "Clipboard Image";
+"source_clipboard" = "Clipboard · %d chars · %@";
+"source_drag" = "Drop · %d chars";
+"source_file" = "File · %@";
+
 // Settings Window
 "settings_title" = "Settings";
 "settings_heading" = "PicBase64 Settings";
@@ -62,6 +69,7 @@
 "decode_failed" = "Failed to decode base64";
 "decode_success" = "Decoded successfully, data size %d bytes";
 "image_invalid" = "Cannot parse as image (invalid base64 or format)";
+"image_status" = "✅ %d×%d · %@ · %@";
 "png_copied" = "PNG copied to clipboard";
 "base64_copied" = "Base64 copied (%d chars)";
 "saved_to" = "Saved to: %@";
@@ -73,6 +81,7 @@
 "notify_startup_body" = "📷 Capture · %@";
 "notify_screenshot_title" = "✅ %@ Base64 Copied";
 "notify_screenshot_body" = "Size %.1f KB · Base64 %d chars";
+"notify_saved_title" = "%@ Saved";
 "notify_error_clipboard" = "No image in clipboard";
 "notify_error_clipboard_body" = "Please copy an image first";
 "notify_format_changed" = "Output format changed";

@@ -1,0 +1,91 @@
+// Uyghur Localization Strings
+
+// Common
+"ok" = "بولىدۇ";
+"done" = "تامام";
+"about" = "ھەققىدە";
+"cancel" = "ئەمەلدىن قالدۇرۇش";
+"error" = "خاتالىق";
+
+// About
+"about_title" = "PicBase64 v%@";
+"about_text" = "رەسىم ۋە Base64 ئارىسىدا ئايلاندۇرۇشنى ئاسانلاشتۇرىدىغان يېنىك ۋە تېز macOS تىزىملىك بالدىقى قورالى.\n\nئىقتىدارلار\n✂️  رايوننى تۇتۇپ بىر چېكىشتە Base64 كە ئايلاندۇرۇش، تور ئايلاندۇرغۇچ لازىم ئەمەس\n🔄  ئىككى يۆنىلىشلىك: رەسىم → Base64 / Base64 → رەسىمنى ئالدىن كۆرۈش\n🎨  كۆپ خىل چىقىرىش فورماتى: data URL / Markdown / JSON / ساپ تېكىست\n🧩  base64 تېكىست ياكى رەسىمنى سۆرەپ تاشلاپ ئالدىن كۆرۈش\n⌨️  تېز تۇتۇش ۋە كۆچۈرۈش ئۈچۈن يەرشارى قىسقا كۇنۇپكىلار\n⚡️  ساپ Swift + AppKit، بېقىنىشچانلىق يوق\n📦  ئورنىتىش بولىقى كىچىك، ئەستە ساقلاش ئىشلىتىشى تۆۋەن\n\nقىسقا كۇنۇپكىلار\n⌥1 رايوننى تۇتۇش  ⌥2 كۆزنەكنى تۇتۇش  ⌥3 پۈتۈن ئېكران\n⌥C چاپلاش تاختىسىدىكى رەسىمنى Base64 كە ئايلاندۇرۇش\n⌥V Base64 نى ئوقۇپ ئالدىن كۆرۈش\n⌘, تەڭشەكلەرنى ئېچىش\n\nتەشەككۈر\nسىنبەلگىلەر Lucide ئوچۇق كود تۈرىدىن\nMIT ئىجازەتنامىسى بىلەن تارقىتىلىدۇ\n\n© 2025 PicBase64 Contributors";
+
+// Menu Bar
+"menu_capture_region" = "رايوننى تۇتۇش";
+"menu_capture_window" = "كۆزنەكنى تۇتۇش";
+"menu_capture_full" = "پۈتۈن ئېكراننى تۇتۇش";
+"menu_clipboard_to_base64" = "چاپلاش تاختىسىدىكى رەسىم → Base64";
+"menu_read_base64" = "Base64 نى ئوقۇش → رەسىمنى كۆرسىتىش";
+"menu_settings" = "تەڭشەكلەر...";
+"menu_quit" = "چېكىنىش";
+"menu_output_format" = "چىقىرىش فورماتى";
+"menu_save_to_desktop" = "PNG نى ئۈستەل يۈزىگىمۇ ساقلاش";
+
+// Output formats
+"format_data_url" = "data:image URL (تەۋسىيە)";
+"format_raw_base64" = "ساپ Base64";
+"format_markdown" = "Markdown ![](...)";
+"format_json" = "JSON {\"data\":\"...\"}";
+
+// Data sources
+"source_screenshot" = "ئېكران تۇتۇش";
+"source_clipboard_image" = "چاپلاش تاختىسىدىكى رەسىم";
+"source_clipboard" = "چاپلاش تاختىسى · %d ھەرپ · %@";
+"source_drag" = "سۆرەپ تاشلاش · %d ھەرپ";
+"source_file" = "ھۆججەت · %@";
+
+// Settings Window
+"settings_title" = "تەڭشەكلەر";
+"settings_heading" = "PicBase64 تەڭشەكلىرى";
+"section_output" = "چىقىرىش فورماتى";
+"section_save" = "ساقلاش تاللانمىلىرى";
+"section_shortcut" = "قىسقا كۇنۇپكىلار";
+"section_startup" = "قوزغىلىش ۋە ئاۋاز";
+
+"label_output_format" = "كۆچۈرۈلىدىغان فورمات";
+"desc_output_format" = "ئېكران تۇتقاندىن كېيىنكى چىقىرىش فورماتىنى تاللاڭ";
+"label_save_to_desktop" = "ئۈستەل يۈزىگە ساقلاش";
+"desc_save_to_desktop" = "تۇتۇلغاندىن كېيىن PNG نى ئۈستەل يۈزىگە ئاپتوماتىك ساقلاش";
+"label_shortcut" = "Base64 ئوقۇش قىسقا كۇنۇپكىسى";
+"desc_shortcut" = "قىسقا كۇنۇپكا بىلەن ئالدىن كۆرۈش كۆزنىكىنى ئېچىڭ";
+"label_launch_at_login" = "كىرگەندە قوزغىتىش";
+"desc_launch_at_login" = "سىستېمىغا كىرگەندە PicBase64 نى ئاپتوماتىك ئىجرا قىلىش";
+"label_sound" = "ئاۋازلىق ئەسكەرتىش";
+"desc_sound" = "تۇتۇش مۇۋەپپەقىيەتلىك بولغاندا ئاۋاز چىقىرىش";
+
+"version_about" = "ھەققىدە";
+"about_button" = "ھەققىدە";
+
+// Preview Window
+"preview_title" = "رەسىمنى ئالدىن كۆرۈش";
+"btn_from_clipboard" = "چاپلاش تاختىسىدىن";
+"btn_copy_png" = "PNG نى كۆچۈرۈش";
+"btn_copy_base64" = "Base64 نى كۆچۈرۈش";
+"btn_save_file" = "ھۆججەتنى ساقلاش";
+"btn_clear" = "تازىلاش";
+"preview_hint" = "base64 تېكىستىنى سۆرەپ تاشلاڭ · ياكى \"چاپلاش تاختىسىدىن\" نى چېكىڭ";
+"clipboard_empty" = "چاپلاش تاختىسى بوش";
+"decode_failed" = "base64 نى يېشىش مەغلۇپ بولدى";
+"decode_success" = "مۇۋەپپەقىيەتلىك يېشىلدى، سانلىق مەلۇمات چوڭلۇقى %d bytes";
+"image_invalid" = "رەسىم سۈپىتىدە پارچىلاش مۇمكىن ئەمەس (base64 ئىناۋەتسىز ياكى فورمات خاتا)";
+"image_status" = "✅ %d×%d · %@ · %@";
+"png_copied" = "PNG چاپلاش تاختىسىغا كۆچۈرۈلدى";
+"base64_copied" = "Base64 كۆچۈرۈلدى (%d ھەرپ)";
+"saved_to" = "ساقلاندى: %@";
+"save_failed" = "ساقلاش مەغلۇپ بولدى: %@";
+"cleared" = "تازىلاندى";
+
+// Notifications
+"notify_startup_title" = "PicBase64 v%@ قوزغىتىلدى";
+"notify_startup_body" = "📷 تۇتۇش · %@";
+"notify_screenshot_title" = "✅ %@ Base64 كۆچۈرۈلدى";
+"notify_screenshot_body" = "چوڭلۇقى %.1f KB · Base64 %d ھەرپ";
+"notify_saved_title" = "%@ ساقلاندى";
+"notify_error_clipboard" = "چاپلاش تاختىسىدا رەسىم يوق";
+"notify_error_clipboard_body" = "ئالدى بىلەن رەسىم كۆچۈرۈڭ";
+"notify_format_changed" = "چىقىرىش فورماتى ئۆزگەردى";
+"notify_error_capture" = "تۇتۇش مەغلۇپ بولدى";
+
+// Permissions
+"permission_screenshot" = "PicBase64 ئېكران رايونىنى تۇتۇش ئۈچۈن ئېكران تۇتۇش رۇخسىتىگە ئېھتىياجلىق";

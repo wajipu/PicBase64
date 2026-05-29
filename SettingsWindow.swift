@@ -16,7 +16,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         let window = NSWindow(contentRect: frame,
                               styleMask: [.titled, .closable],
                               backing: .buffered, defer: false)
-        window.title = "PicBase64 · 设置"
+        window.title = "PicBase64 · \(L("settings_title"))"
         window.center()
         window.isRestorable = true
         super.init(window: window)
@@ -49,32 +49,28 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         ])
         
         // 标题
-        let titleLabel = sectionTitle("PicBase64 设置")
+        let titleLabel = sectionTitle(L("settings_heading"))
         mainStack.addArrangedSubview(titleLabel)
         
         // 分隔线
         mainStack.addArrangedSubview(separator())
         
-        // Section 1: 输出格式
-        mainStack.addArrangedSubview(sectionHeader(icon: "file-text", title: "输出格式"))
+        mainStack.addArrangedSubview(sectionHeader(icon: "file-text", title: L("section_output")))
         mainStack.addArrangedSubview(createFormatRow())
         
         mainStack.addArrangedSubview(separator())
         
-        // Section 2: 保存选项
-        mainStack.addArrangedSubview(sectionHeader(icon: "save", title: "保存选项"))
+        mainStack.addArrangedSubview(sectionHeader(icon: "save", title: L("section_save")))
         mainStack.addArrangedSubview(createSaveRow())
         
         mainStack.addArrangedSubview(separator())
         
-        // Section 3: 快捷键
-        mainStack.addArrangedSubview(sectionHeader(icon: "keyboard", title: "快捷键"))
+        mainStack.addArrangedSubview(sectionHeader(icon: "keyboard", title: L("section_shortcut")))
         mainStack.addArrangedSubview(createShortcutRow())
         
         mainStack.addArrangedSubview(separator())
         
-        // Section 4: 启动与反馈
-        mainStack.addArrangedSubview(sectionHeader(icon: "zap", title: "启动与反馈"))
+        mainStack.addArrangedSubview(sectionHeader(icon: "zap", title: L("section_startup")))
         mainStack.addArrangedSubview(createStartupRow())
         mainStack.addArrangedSubview(createSoundRow())
         
@@ -87,7 +83,8 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         buttonStack.orientation = .horizontal
         buttonStack.spacing = 8
         
-        let versionLabel = NSTextField(labelWithString: "v3.0 · Lucide Icons")
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.1"
+        let versionLabel = NSTextField(labelWithString: "v\(version) · Lucide Icons")
         versionLabel.font = .systemFont(ofSize: 11)
         versionLabel.textColor = .tertiaryLabelColor
         buttonStack.addArrangedSubview(versionLabel)
@@ -95,10 +92,10 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         let spacer2 = NSView()
         buttonStack.addArrangedSubview(spacer2)
         
-        let aboutBtn = iconButton(icon: "info", title: "关于") { [weak self] in
+        let aboutBtn = iconButton(icon: "info", title: L("about_button")) { [weak self] in
             self?.showAbout()
         }
-        let doneBtn = iconButton(icon: "check", title: "完成", primary: true) { [weak self] in
+        let doneBtn = iconButton(icon: "check", title: L("done"), primary: true) { [weak self] in
             self?.window?.close()
         }
         buttonStack.addArrangedSubview(aboutBtn)
@@ -142,14 +139,14 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     
     func createFormatRow() -> NSView {
         return settingRow(
-            label: "复制时的格式",
-            description: "选择截图后生成 Base64 的输出格式",
+            label: L("label_output_format"),
+            description: L("desc_output_format"),
             control: { [weak self] in
                 let popup = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
-                popup.addItem(withTitle: "data:image URL (推荐)")
-                popup.addItem(withTitle: "纯 Base64")
-                popup.addItem(withTitle: "Markdown ![](...)")
-                popup.addItem(withTitle: "JSON {\"data\":\"...\"}")
+                popup.addItem(withTitle: L("format_data_url"))
+                popup.addItem(withTitle: L("format_raw_base64"))
+                popup.addItem(withTitle: L("format_markdown"))
+                popup.addItem(withTitle: L("format_json"))
                 
                 let format = self?.parent?.format ?? .dataURL
                 switch format {
@@ -169,8 +166,8 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     
     func createSaveRow() -> NSView {
         return settingRow(
-            label: "同时保存到桌面",
-            description: "截图后自动保存 PNG 文件到桌面",
+            label: L("label_save_to_desktop"),
+            description: L("desc_save_to_desktop"),
             control: { [weak self] in
                 let sw = NSSwitch()
                 sw.state = (self?.parent?.saveToDesktop ?? false) ? .on : .off
@@ -184,8 +181,8 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     
     func createShortcutRow() -> NSView {
         return settingRow(
-            label: "读取 Base64 快捷键",
-            description: "按下快捷键打开图片预览窗口",
+            label: L("label_shortcut"),
+            description: L("desc_shortcut"),
             control: { [weak self] in
                 let popup = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 160, height: 24))
                 popup.addItem(withTitle: "⌥V")
@@ -203,8 +200,8 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     
     func createStartupRow() -> NSView {
         return settingRow(
-            label: "开机自动启动",
-            description: "登录系统时自动运行 PicBase64",
+            label: L("label_launch_at_login"),
+            description: L("desc_launch_at_login"),
             control: { [weak self] in
                 let sw = NSSwitch()
                 sw.state = UserDefaults.standard.bool(forKey: "launchAtLogin") ? .on : .off
@@ -218,8 +215,8 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
     
     func createSoundRow() -> NSView {
         return settingRow(
-            label: "提示音",
-            description: "截图成功后播放提示音",
+            label: L("label_sound"),
+            description: L("desc_sound"),
             control: { [weak self] in
                 let sw = NSSwitch()
                 sw.state = UserDefaults.standard.object(forKey: "soundEnabled") as? Bool ?? true ? .on : .off

@@ -2,6 +2,14 @@ import AppKit
 import Foundation
 import UserNotifications
 
+func L(_ key: String) -> String {
+    NSLocalizedString(key, comment: "")
+}
+
+func LF(_ key: String, _ args: CVarArg...) -> String {
+    String(format: L(key), locale: Locale.current, arguments: args)
+}
+
 // MARK: - AppKit SVG 扩展
 extension NSImage {
     convenience init?(svgName: String, size: CGFloat = 16) {
@@ -85,7 +93,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         UNUserNotificationCenter.current().delegate = self
         requestPermissions()
         setupMenuBar()
-        showNotify(title: "PicBase64 v3 已启动", body: "📷 截取 → /v3 粘贴读取 →")
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.0"
+        showNotify(title: LF("notify_startup_title", version), body: LF("notify_startup_body", "⌥1 / ⌥C / ⌥V"))
     }
 
     func requestPermissions() {
@@ -108,15 +117,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         let menu = NSMenu()
 
         // 截图
-        addShotItem(menu, title: "选取区域截图         ⌥1", selector: #selector(captureRegion(_:)), key: "1")
-        addShotItem(menu, title: "截取窗口             ⌥2", selector: #selector(captureWindow(_:)), key: "2")
-        addShotItem(menu, title: "全屏截图             ⌥3", selector: #selector(captureFull(_:)), key: "3")
-        addShotItem(menu, title: "剪贴板图片 → Base64  ⌥C", selector: #selector(clipboardToB64(_:)), key: "c")
+        addShotItem(menu, title: "\(L("menu_capture_region"))  ⌥1", selector: #selector(captureRegion(_:)), key: "1")
+        addShotItem(menu, title: "\(L("menu_capture_window"))  ⌥2", selector: #selector(captureWindow(_:)), key: "2")
+        addShotItem(menu, title: "\(L("menu_capture_full"))  ⌥3", selector: #selector(captureFull(_:)), key: "3")
+        addShotItem(menu, title: "\(L("menu_clipboard_to_base64"))  ⌥C", selector: #selector(clipboardToB64(_:)), key: "c")
 
         menu.addItem(.separator())
 
         // 🆕 反向解析
-        let readItem = NSMenuItem(title: "读取 Base64 → 显示图片  ⌥V",
+        let readItem = NSMenuItem(title: "\(L("menu_read_base64"))  ⌥V",
                                   action: #selector(showBase64Preview(_:)), keyEquivalent: "v")
         readItem.keyEquivalentModifierMask = .option
         readItem.target = self
@@ -125,7 +134,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         menu.addItem(.separator())
 
         // ⚙️ 设置
-        let settingsItem = NSMenuItem(title: "设置...",
+        let settingsItem = NSMenuItem(title: L("menu_settings"),
                                       action: #selector(showSettings(_:)), keyEquivalent: ",")
         settingsItem.keyEquivalentModifierMask = .command
         settingsItem.target = self
@@ -134,14 +143,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         menu.addItem(.separator())
 
         // 输出格式
-        let formatParent = NSMenuItem(title: "输出格式", action: nil, keyEquivalent: "")
+        let formatParent = NSMenuItem(title: L("menu_output_format"), action: nil, keyEquivalent: "")
         let formatMenu = NSMenu()
         formatParent.submenu = formatMenu
         let formats: [(String, OutputFormat)] = [
-            ("data:image URL (推荐)", .dataURL),
-            ("纯 Base64", .raw),
-            ("Markdown ![](data:...)", .markdown),
-            ("JSON {\"data\":\"...\"}", .json),
+            (L("format_data_url"), .dataURL),
+            (L("format_raw_base64"), .raw),
+            (L("format_markdown"), .markdown),
+            (L("format_json"), .json),
         ]
         for (label, fmt) in formats {
             let item = NSMenuItem(title: label, action: #selector(chooseFormat(_:)), keyEquivalent: "")
@@ -152,14 +161,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         }
         menu.addItem(formatParent)
 
-        let saveItem = NSMenuItem(title: "同时保存 PNG 到桌面", action: #selector(toggleSave(_:)), keyEquivalent: "")
+        let saveItem = NSMenuItem(title: L("menu_save_to_desktop"), action: #selector(toggleSave(_:)), keyEquivalent: "")
         saveItem.state = saveToDesktop ? .on : .off
         saveItem.target = self
         menu.addItem(saveItem)
 
         menu.addItem(.separator())
 
-        let quitItem = NSMenuItem(title: "退出", action: #selector(quit(_:)), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: L("menu_quit"), action: #selector(quit(_:)), keyEquivalent: "q")
         quitItem.keyEquivalentModifierMask = .command
         quitItem.target = self
         menu.addItem(quitItem)
@@ -192,10 +201,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             guard FileManager.default.fileExists(atPath: tmpFile) else { return }
             defer { try? FileManager.default.removeItem(atPath: tmpFile) }
             let data = try Data(contentsOf: URL(fileURLWithPath: tmpFile))
-            processResult(data: data, label: "截图")
+            processResult(data: data, label: L("source_screenshot"))
         } catch {
             NSSound.beep()
-            showNotify(title: "截图失败", body: "\(error)")
+            showNotify(title: L("notify_error_capture"), body: "\(error)")
         }
     }
 
@@ -205,10 +214,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
               let tiff = image.tiffRepresentation,
               let rep = NSBitmapImageRep(data: tiff),
               let pngData = rep.representation(using: .png, properties: [:]) else {
-            showNotify(title: "剪贴板无图片", body: "请先复制一张图片")
+            showNotify(title: L("notify_error_clipboard"), body: L("notify_error_clipboard_body"))
             return
         }
-        processResult(data: pngData, label: "剪贴板图片")
+        processResult(data: pngData, label: L("source_clipboard_image"))
     }
 
     func processResult(data: Data, label: String) {
@@ -231,13 +240,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             let desktopPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0]
             let savePath = "\(desktopPath)/PicBase64_\(formatTS()).png"
             try? data.write(to: URL(fileURLWithPath: savePath))
-            showNotify(title: "\(label) 已保存", body: savePath)
+            showNotify(title: LF("notify_saved_title", label), body: savePath)
         }
 
         NSSound(named: "Funk")?.play()
         let sizeKB = Double(data.count) / 1024.0
-        let body = String(format: "大小 %.1f KB · Base64 %d 字符", sizeKB, b64.count)
-        showNotify(title: "✅ \(label) Base64 已复制", body: body)
+        let body = LF("notify_screenshot_body", sizeKB, b64.count)
+        showNotify(title: LF("notify_screenshot_title", label), body: body)
     }
 
     // MARK: - 🆕 读取 Base64 显示图片
@@ -321,7 +330,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         for item in sender.menu?.items ?? [] {
             item.state = (item.representedObject as? OutputFormat == fmt) ? .on : .off
         }
-        showNotify(title: "输出格式", body: fmt.rawValue)
+        showNotify(title: L("notify_format_changed"), body: fmt.rawValue)
     }
 
     @objc func toggleSave(_ sender: NSMenuItem) {
@@ -378,7 +387,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         let window = NSWindow(contentRect: frame,
                               styleMask: [.titled, .closable, .resizable, .miniaturizable],
                               backing: .buffered, defer: false)
-        window.title = "PicBase64 · 图片预览"
+        window.title = "PicBase64 · \(L("preview_title"))"
         window.center()
         window.isRestorable = true
         super.init(window: window)
@@ -400,11 +409,11 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         toolbar.orientation = .horizontal
         toolbar.spacing = 8
 
-        let pasteBtn = toolbarButton(icon: "clipboard", title: "从剪贴板读取", action: #selector(loadFromClipboard))
-        let copyPngBtn = toolbarButton(icon: "image", title: "复制 PNG 图片", action: #selector(copyPNG))
-        let copyB64Btn = toolbarButton(icon: "copy", title: "复制 Base64", action: #selector(copyB64))
-        let saveBtn = toolbarButton(icon: "download", title: "保存文件", action: #selector(saveFile))
-        let clearBtn = toolbarButton(icon: "trash-2", title: "清空", action: #selector(clearAll))
+        let pasteBtn = toolbarButton(icon: "clipboard", title: L("btn_from_clipboard"), action: #selector(loadFromClipboard))
+        let copyPngBtn = toolbarButton(icon: "image", title: L("btn_copy_png"), action: #selector(copyPNG))
+        let copyB64Btn = toolbarButton(icon: "copy", title: L("btn_copy_base64"), action: #selector(copyB64))
+        let saveBtn = toolbarButton(icon: "download", title: L("btn_save_file"), action: #selector(saveFile))
+        let clearBtn = toolbarButton(icon: "trash-2", title: L("btn_clear"), action: #selector(clearAll))
 
         [pasteBtn, copyPngBtn, copyB64Btn, saveBtn, NSView(), clearBtn].forEach { toolbar.addArrangedSubview($0) }
 
@@ -418,7 +427,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         ])
 
         // 信息标签
-        infoLabel = NSTextField(labelWithString: "拖入 base64 文本 · 或点击「从剪贴板读取」")
+        infoLabel = NSTextField(labelWithString: L("preview_hint"))
         infoLabel.font = .systemFont(ofSize: 12, weight: .medium)
         infoLabel.textColor = .secondaryLabelColor
         infoLabel.alignment = .center
@@ -511,7 +520,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         
         guard let data = data, let img = NSImage(data: data) else {
             parent?.debugLog("❌ 数据为空或 NSImage 创建失败")
-            infoLabel.stringValue = "❌ 无法解析为图片 (base64 无效或格式错误)"
+            infoLabel.stringValue = "❌ \(L("image_invalid"))"
             currentData = nil
             imageView.image = nil
             flashWindow(red: true)
@@ -532,14 +541,14 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         case .clipboard(let raw):
             let len = min(raw.count, 60)
             let preview = raw.prefix(len) + (raw.count > len ? "…" : "")
-            sourceStr = "剪贴板 · \(raw.count)字符 · \(preview)"
+            sourceStr = LF("source_clipboard", raw.count, String(preview))
         case .drag(let raw):
-            sourceStr = "拖入 · \(raw.count)字符"
+            sourceStr = LF("source_drag", raw.count)
         case .file(let url):
-            sourceStr = "文件 · \(url.lastPathComponent)"
+            sourceStr = LF("source_file", url.lastPathComponent)
         }
 
-        infoLabel.stringValue = "✅ \(Int(img.size.width))×\(Int(img.size.height)) · \(sizeStr) · \(sourceStr)"
+        infoLabel.stringValue = LF("image_status", Int(img.size.width), Int(img.size.height), sizeStr, sourceStr)
         currentData = data
         flashWindow(red: false)
     }
@@ -557,14 +566,14 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
     @objc func loadFromClipboard() {
         let pb = NSPasteboard.general
         guard let str = pb.string(forType: .string) else {
-            infoLabel.stringValue = "❌ 剪贴板为空"
+            infoLabel.stringValue = "❌ \(L("clipboard_empty"))"
             print("❌ 剪贴板为空")
             return
         }
         print("✅ 从剪贴板读取到 \(str.count) 字符")
         print("前100字符: \(str.prefix(100))")
         guard let data = parent?.decodeBase64(str) else {
-            infoLabel.stringValue = "❌ 无法解码 base64"
+            infoLabel.stringValue = "❌ \(L("decode_failed"))"
             print("❌ 解码失败")
             return
         }
@@ -578,7 +587,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.writeObjects([img])
-        showInfoShort("🖼 PNG 已复制到剪贴板")
+        showInfoShort("🖼 \(L("png_copied"))")
     }
 
     @objc func copyB64() {
@@ -587,7 +596,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         let output = "data:image/png;base64,\(b64)"
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(output, forType: .string)
-        showInfoShort("🔤 base64 已复制 (\(b64.count) 字符)")
+        showInfoShort("🔤 \(LF("base64_copied", b64.count))")
     }
 
     @objc func saveFile() {
@@ -599,9 +608,9 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
             if response == .OK, let url = panel.url {
                 do {
                     try data.write(to: url)
-                    self.showInfoShort("💾 已保存到: \(url.lastPathComponent)")
+                    self.showInfoShort("💾 \(LF("saved_to", url.lastPathComponent))")
                 } catch {
-                    self.infoLabel.stringValue = "❌ 保存失败: \(error)"
+                    self.infoLabel.stringValue = "❌ \(LF("save_failed", "\(error)"))"
                 }
             }
         }
@@ -610,7 +619,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
     @objc func clearAll() {
         currentData = nil
         imageView.image = nil
-        infoLabel.stringValue = "已清空"
+        infoLabel.stringValue = L("cleared")
     }
 
     func showInfoShort(_ s: String) {

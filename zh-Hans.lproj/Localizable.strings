@@ -28,6 +28,13 @@
 "format_markdown" = "Markdown ![](...)";
 "format_json" = "JSON {\"data\":\"...\"}";
 
+// 数据来源
+"source_screenshot" = "截图";
+"source_clipboard_image" = "剪贴板图片";
+"source_clipboard" = "剪贴板 · %d 字符 · %@";
+"source_drag" = "拖入 · %d 字符";
+"source_file" = "文件 · %@";
+
 // 设置窗口
 "settings_title" = "设置";
 "settings_heading" = "PicBase64 设置";
@@ -62,6 +69,7 @@
 "decode_failed" = "无法解码 base64";
 "decode_success" = "解码成功，数据大小 %d bytes";
 "image_invalid" = "无法解析为图片（base64 无效或格式错误）";
+"image_status" = "✅ %d×%d · %@ · %@";
 "png_copied" = "PNG 已复制到剪贴板";
 "base64_copied" = "base64 已复制（%d 字符）";
 "saved_to" = "已保存到: %@";
@@ -73,6 +81,7 @@
 "notify_startup_body" = "📷 截取 · %@";
 "notify_screenshot_title" = "✅ %@ Base64 已复制";
 "notify_screenshot_body" = "大小 %.1f KB · Base64 %d 字符";
+"notify_saved_title" = "%@ 已保存";
 "notify_error_clipboard" = "剪贴板无图片";
 "notify_error_clipboard_body" = "请先复制一张图片";
 "notify_format_changed" = "输出格式已更改";

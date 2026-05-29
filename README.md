@@ -13,10 +13,10 @@
 - 🎨 **多种输出格式** — data URL / Markdown / JSON / 纯 Base64
 - 🧩 **拖拽预览** — 把 base64 文本或图片文件直接拖入预览窗口
 - ⌨️ **全局快捷键** — ⌥1 / ⌥2 / ⌥3 / ⌥C / ⌥V 随时触发
-- 🌍 **国际化** — 支持简体中文和英文
+- 🌍 **国际化** — 支持简体中文、英文和维吾尔语
 - ⚡️ **原生实现** — 纯 Swift + AppKit，零依赖
 - 🎨 **Lucide 图标** — 统一精美的扁平化 UI 图标
-- 📦 **轻量体积** — 安装包不到 400KB
+- 📦 **轻量体积** — 安装包约数百 KB
 
 ## 📸 截图
 
@@ -48,12 +48,11 @@ swiftc -O \
   -o PicBase64
 
 # 打包为 .app
-mkdir -p PicBase64.app/Contents/{MacOS,Resources/icons,zh-Hans.lproj,en.lproj}
+mkdir -p PicBase64.app/Contents/{MacOS,Resources/icons}
 cp PicBase64 PicBase64.app/Contents/MacOS/
 cp Info.plist PicBase64.app/Contents/
 cp icons/*.svg PicBase64.app/Contents/Resources/icons/
-cp zh-Hans.lproj/*.strings PicBase64.app/Contents/Resources/zh-Hans.lproj/
-cp en.lproj/*.strings PicBase64.app/Contents/Resources/en.lproj/
+find . -maxdepth 1 -type d -name "*.lproj" -exec cp -R {} PicBase64.app/Contents/Resources/ \;
 cp /tmp/PicBase64.icns PicBase64.app/Contents/Resources/AppIcon.icns
 
 # 运行
@@ -72,8 +71,15 @@ PicBase64/
 ├── icons/                 # 所用到的 Lucide SVG 图标
 ├── zh-Hans.lproj/         # 中文本地化
 ├── en.lproj/              # 英文本地化
+├── ug.lproj/              # 维吾尔语本地化
+├── .vibe/config.toml      # Vibe Code 项目配置
+├── AGENTS.md              # AI 协作与构建说明
 └── makeIconV2.swift       # 生成扁平化图标脚本
 ```
+
+## 🤖 Vibe Code 配置
+
+仓库包含项目级 `.vibe/config.toml` 和 `AGENTS.md`。项目配置只保存通用偏好，不包含 API Key；密钥请放在本机的 `~/.vibe/config.toml` 或环境变量里。
 
 ## 🎛 快捷键
 
