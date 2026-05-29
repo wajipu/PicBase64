@@ -373,9 +373,11 @@ enum ImageSource {
 // MARK: - 图片预览窗口
 class PreviewWindowController: NSWindowController, NSWindowDelegate {
     weak var parent: AppDelegate?
+    var scrollView: NSScrollView!
     var imageView: NSImageView!
     var infoLabel: NSTextField!
     var currentData: Data?
+    var currentImage: NSImage?
     var currentSource: ImageSource?
 
     // 拖拽区
@@ -442,15 +444,17 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         ])
 
         // 图片展示区 (带滚轮缩放)
-        let scrollView = NSScrollView()
+        scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = true
         scrollView.autohidesScrollers = true
         scrollView.borderType = .bezelBorder
 
         imageView = NSImageView()
-        imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.imageScaling = .scaleProportionallyDown
+        imageView.imageAlignment = .alignCenter
         imageView.animates = true
+        imageView.frame = NSRect(x: 0, y: 0, width: 1, height: 1)
 
         scrollView.documentView = imageView
         cv.addSubview(scrollView)
@@ -522,6 +526,7 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
             parent?.debugLog("❌ 数据为空或 NSImage 创建失败")
             infoLabel.stringValue = "❌ \(L("image_invalid"))"
             currentData = nil
+            currentImage = nil
             imageView.image = nil
             flashWindow(red: true)
             return
@@ -529,8 +534,10 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
 
         parent?.debugLog("✅ NSImage 创建成功: \(img.size.width)×\(img.size.height)")
         currentData = data
+        currentImage = img
         currentSource = source
         imageView.image = img
+        layoutPreviewImage()
 
         let sizeStr: String
         if data.count < 1024 { sizeStr = "\(data.count) B" }
@@ -618,7 +625,9 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
 
     @objc func clearAll() {
         currentData = nil
+        currentImage = nil
         imageView.image = nil
+        imageView.frame = NSRect(x: 0, y: 0, width: 1, height: 1)
         infoLabel.stringValue = L("cleared")
     }
 
@@ -646,6 +655,38 @@ class PreviewWindowController: NSWindowController, NSWindowDelegate {
         }
         flashWindow(red: true)
         return false
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        layoutPreviewImage()
+    }
+
+    func layoutPreviewImage() {
+        guard let img = currentImage else { return }
+
+        window?.contentView?.layoutSubtreeIfNeeded()
+        let viewport = scrollView.contentView.bounds.size
+        guard viewport.width > 1, viewport.height > 1 else {
+            imageView.frame = NSRect(origin: .zero, size: img.size)
+            return
+        }
+
+        let imageSize = img.size
+        let scale = min(viewport.width / imageSize.width, viewport.height / imageSize.height, 1)
+        let displaySize = NSSize(
+            width: max(1, floor(imageSize.width * scale)),
+            height: max(1, floor(imageSize.height * scale))
+        )
+
+        imageView.frame = NSRect(
+            x: 0,
+            y: 0,
+            width: max(viewport.width, displaySize.width),
+            height: max(viewport.height, displaySize.height)
+        )
+        imageView.needsDisplay = true
+        scrollView.contentView.scroll(to: .zero)
+        scrollView.reflectScrolledClipView(scrollView.contentView)
     }
 }
 

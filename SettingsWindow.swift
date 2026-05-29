@@ -83,7 +83,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         buttonStack.orientation = .horizontal
         buttonStack.spacing = 8
         
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.1"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.2"
         let versionLabel = NSTextField(labelWithString: "v\(version) · Lucide Icons")
         versionLabel.font = .systemFont(ofSize: 11)
         versionLabel.textColor = .tertiaryLabelColor
